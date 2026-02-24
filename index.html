@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KONRU OBGYN — Sistem Operan Pasien</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root {
+  --bg: #080c14;
+  --panel: #0d1320;
+  --card: #111827;
+  --border: #1e2d45;
+  --border2: #253348;
+  --accent: #38bdf8;
+  --accent-dim: #0ea5e920;
+  --green: #4ade80;
+  --green-dim: #16a34a20;
+  --amber: #fbbf24;
+  --amber-dim: #d9770620;
+  --rose: #fb7185;
+  --rose-dim: #be123c20;
+  --violet: #a78bfa;
+  --violet-dim: #6d28d920;
+  --cyan: #22d3ee;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #4b6080;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Outfit', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body { height:100%; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+/* ═══════════════════════════════════════
+   PASTE SCREEN
+══════════════════════════════════════════ */
+#paste-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 28px;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, #0ea5e910 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, #6d28d910 0%, transparent 60%),
+    var(--bg);
+}
+
+.paste-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+
+.paste-title {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #e2e8f0 0%, #38bdf8 50%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.paste-sub {
+  font-size: 14px;
+  color: var(--text3);
+  max-width: 460px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.paste-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 24px 80px #00000060;
+}
+
+.paste-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+#paste-input {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  resize: vertical;
+  min-height: 260px;
+  max-height: 500px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.7;
+  width: 100%;
+}
+#paste-input::placeholder { color: var(--text3); font-size: 11px; }
+#paste-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.btn-row { display: flex; gap: 10px; }
+
+.btn-primary {
+  flex: 1;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  background: var(--panel);
+  color: var(--text2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+.tags-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.tag b { color: var(--accent); }
+
+#parse-error {
+  display: none;
+  background: var(--rose-dim);
+  border: 1px solid #be123c50;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--rose);
+}
+
+/* ═══════════════════════════════════════
+   APP SCREEN
+══════════════════════════════════════════ */
+#app-screen {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  z-index: 30;
+}
+
+.topbar-row1 {
+  height: 50px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.app-logo {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.app-logo-badge {
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.topbar-sep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+.topbar-date { font-family: var(--mono); font-size: 11px; color: var(--text2); white-space: nowrap; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.icon-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text2);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all 0.15s;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ─── STATS BAR ─── */
+.stats-bar {
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  min-height: 42px;
+}
+
+.stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--text2);
+  white-space: nowrap;
+}
+.stat-val {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+.stat-val.blue { color: var(--accent); }
+.stat-val.green { color: var(--green); }
+.stat-val.amber { color: var(--amber); }
+.stat-val.rose { color: var(--rose); }
+.stat-val.violet { color: var(--violet); }
+
+.dpjp-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--text2);
+  white-space: nowrap;
+}
+.dpjp-name { font-weight: 600; color: var(--text); }
+.dpjp-count { font-family: var(--mono); font-weight: 700; color: var(--accent); margin-left: 2px; }
+
+/* ─── MAIN LAYOUT ─── */
+.app-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: 215px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease;
+}
+.sidebar.collapsed { width: 0; border: none; }
+
+.sidebar-inner { overflow-y: auto; flex: 1; padding: 10px 0; }
+
+.sb-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text3);
+  padding: 8px 14px 4px;
+  text-transform: uppercase;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  padding: 7px 14px;
+  cursor: pointer;
+  gap: 8px;
+  border-left: 2px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+  white-space: nowrap;
+}
+.sb-item:hover { background: var(--card); }
+.sb-item.active { background: var(--card); border-left-color: var(--accent); }
+.sb-item-icon { font-size: 14px; flex-shrink: 0; }
+.sb-item-label { font-size: 12.5px; font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.sb-item-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 20px;
+  background: var(--card);
+  color: var(--text2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sb-item-count.red { background: var(--rose-dim); color: var(--rose); border-color: #be123c40; }
+.sb-item-count.green { background: var(--green-dim); color: var(--green); border-color: #16a34a40; }
+.sb-item-count.amber { background: var(--amber-dim); color: var(--amber); border-color: #d9770640; }
+
+.sb-divider { height: 1px; background: var(--border); margin: 6px 12px; }
+
+.sidebar-footer {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.new-data-btn {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text2);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.new-data-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ─── SIDEBAR TOGGLE ─── */
+.sb-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 215px;
+  width: 18px;
+  height: 44px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0 7px 7px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: left 0.2s ease;
+}
+.sb-toggle:hover { background: var(--card); }
+.sb-toggle.collapsed { left: 0; border-left: 1px solid var(--border); border-radius: 0 7px 7px 0; }
+.sb-toggle.collapsed svg { transform: rotate(180deg); }
+.sb-toggle svg { color: var(--text3); transition: transform 0.2s; }
+
+/* ─── CONTENT AREA ─── */
+.content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+/* ─── VIEW TABS ─── */
+.view-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 8px 16px 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  flex-shrink: 0;
+}
+.view-tab {
+  padding: 7px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text3);
+  cursor: pointer;
+  border-radius: 7px 7px 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.view-tab:hover { color: var(--text2); }
+.view-tab.active {
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--border);
+  border-bottom-color: var(--bg);
+}
+.tab-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--border);
+  color: var(--text2);
+  padding: 1px 5px;
+  border-radius: 10px;
+}
+.tab-count.green { background: var(--green-dim); color: var(--green); }
+
+/* ─── VIEWS ─── */
+.view { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+.view.active { display: flex; }
+
+/* ─── SEARCH / FILTER BAR ─── */
+.filter-bar {
+  padding: 10px 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 160px;
+  max-width: 300px;
+}
+.search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
+#search-input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px 7px 32px;
+  font-size: 12.5px;
+  color: var(--text);
+  font-family: var(--sans);
+  outline: none;
+  transition: border-color 0.15s;
+}
+#search-input:focus { border-color: var(--accent); }
+#search-input::placeholder { color: var(--text3); }
+
+.filter-select {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--text2);
+  font-family: var(--sans);
+  outline: none;
+  cursor: pointer;
+}
+.filter-select:focus { border-color: var(--accent); }
+
+.filter-chip {
+  padding: 6px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-chip:hover, .filter-chip.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.filter-chip.amber.active { border-color: var(--amber); color: var(--amber); background: var(--amber-dim); }
+.filter-chip.rose.active { border-color: var(--rose); color: var(--rose); background: var(--rose-dim); }
+.filter-chip.green.active { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+/* ─── PATIENT TABLE ─── */
+.scroll-area { flex: 1; overflow-y: auto; padding: 16px; }
+
+.room-block { margin-bottom: 24px; }
+
+.room-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 0 2px;
+}
+.room-icon { font-size: 16px; }
+.room-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text2);
+}
+.room-count-badge {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text2);
+}
+
+/* THE CARDS GRID */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 10px;
+}
+
+.pt-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+.pt-card:hover { border-color: var(--border2); box-shadow: 0 4px 20px #00000040; }
+.pt-card.is-krs { border-left: 3px solid var(--green); }
+.pt-card.is-new { border-left: 3px solid var(--amber); }
+.pt-card.is-baby { border-left: 3px solid var(--violet); }
+.pt-card.is-vk { border-left: 3px solid var(--rose); }
+.pt-card.is-critical { border-left: 3px solid var(--rose); }
+
+/* Card header */
+.card-head {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.card-no {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  padding: 2px 6px;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+.card-id {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+.card-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  flex: 1;
+}
+.card-name-sub {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 1px;
+  font-family: var(--mono);
+}
+.card-badges { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1.5;
+}
+.badge.krs { background: var(--green-dim); color: var(--green); border: 1px solid #16a34a40; }
+.badge.baru { background: var(--amber-dim); color: var(--amber); border: 1px solid #d9770640; }
+.badge.baby { background: var(--violet-dim); color: var(--violet); border: 1px solid #6d28d940; }
+.badge.vk { background: var(--rose-dim); color: var(--rose); border: 1px solid #be123c40; }
+.badge.pbi { background: #1e293b; color: #64748b; border: 1px solid #334155; }
+.badge.jkn { background: #0c2340; color: var(--accent); border: 1px solid #1d4ed840; }
+.badge.um { background: #2d1b69; color: var(--violet); border: 1px solid #5b21b640; }
+.badge.pbpu { background: #1a1a1a; color: var(--text3); border: 1px solid var(--border); }
+.badge.kelas { background: var(--card); color: var(--text2); border: 1px solid var(--border2); font-family: var(--mono); }
+.badge.adm { background: #042f2e; color: var(--cyan); border: 1px solid #065f4640; }
+
+/* Card body */
+.card-body { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+.card-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+}
+.card-row-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-top: 1px;
+  white-space: nowrap;
+  min-width: 42px;
+}
+.card-row-val { color: var(--text2); line-height: 1.5; flex: 1; }
+.card-row-val b { color: var(--text); font-weight: 600; }
+
+.diag-text {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.diag-text b { color: var(--text); }
+
+.tx-block {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.7;
+  font-family: var(--mono);
+  max-height: 140px;
+  overflow-y: auto;
+}
+.tx-block .tx-line { color: var(--text2); }
+.tx-block .tx-line.highlight { color: var(--amber); }
+
+.card-footer {
+  padding: 7px 14px 9px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.dpjp-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.dpjp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.ob-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text3);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 7px;
+}
+.ob-tag.today { color: var(--amber); border-color: #d9770640; background: var(--amber-dim); }
+
+.jam-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--cyan);
+  background: #042f2e;
+  border: 1px solid #065f4640;
+  border-radius: 4px;
+  padding: 1px 7px;
+  margin-left: auto;
+}
+
+/* ─── KRS VIEW ─── */
+.krs-list { padding: 16px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1; }
+.krs-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.krs-num { font-family: var(--mono); font-size: 10px; color: var(--text3); padding-top: 2px; flex-shrink: 0; min-width: 24px; }
+.krs-main { flex: 1; }
+.krs-name { font-size: 14px; font-weight: 700; }
+.krs-detail { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.krs-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+.krs-adm {
+  text-align: right;
+  font-size: 11px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.krs-adm b { display: block; color: var(--green); font-size: 12px; font-weight: 700; }
+
+/* ─── SUMMARY VIEW ─── */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 16px;
+}
+.sum-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sum-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.sum-val {
+  font-family: var(--mono);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+.sum-val.blue { color: var(--accent); }
+.sum-val.green { color: var(--green); }
+.sum-val.amber { color: var(--amber); }
+.sum-val.rose { color: var(--rose); }
+.sum-val.violet { color: var(--violet); }
+.sum-sub { font-size: 12px; color: var(--text3); }
+
+.dpjp-table { margin: 0 16px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.dpjp-table-header { padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+.dpjp-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.dpjp-row:last-child { border: none; }
+.dpjp-dr { font-size: 13px; font-weight: 700; flex: 1; }
+.dpjp-bar-wrap { flex: 2; height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; }
+.dpjp-bar { height: 100%; background: linear-gradient(90deg, #0ea5e9, #6366f1); border-radius: 10px; transition: width 0.8s ease; }
+.dpjp-cnt { font-family: var(--mono); font-weight: 700; font-size: 14px; color: var(--accent); min-width: 24px; text-align: right; }
+
+.note-block {
+  margin: 0 16px 16px;
+  background: var(--amber-dim);
+  border: 1px solid #d9770640;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--amber);
+  line-height: 1.7;
+}
+.note-block-title { font-weight: 700; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; color: var(--amber); }
+
+.stock-alert-block {
+  margin: 0 16px 16px;
+  background: var(--rose-dim);
+  border: 1px solid #be123c40;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.stock-alert-title { font-weight: 700; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; color: var(--rose); }
+.stock-item { font-size: 12px; color: var(--rose); line-height: 1.7; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.view.active { animation: fadeSlide 0.2s ease; }
+
+/* ─── EXPAND TOGGLE ─── */
+.expand-toggle {
+  font-size: 11px;
+  color: var(--text3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 0;
+  border: none;
+  background: none;
+  font-family: var(--sans);
+  transition: color 0.15s;
+}
+.expand-toggle:hover { color: var(--accent); }
+
+/* EMPTY */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text3);
+  font-size: 14px;
+}
+.empty-icon { font-size: 40px; margin-bottom: 10px; }
+
+/* ─── INPUT METHOD TABS ─── */
+.input-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.input-tab {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  background: var(--panel);
+  color: var(--text3);
+  border: none;
+  border-right: 1px solid var(--border);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.input-tab:last-child { border-right: none; }
+.input-tab:hover { color: var(--text2); background: var(--card); }
+.input-tab.active { background: var(--card); color: var(--accent); }
+.input-panel { display: none; }
+.input-panel.active { display: flex; flex-direction: column; gap: 12px; }
+
+/* ─── PDF DROP ZONE ─── */
+.pdf-dropzone {
+  border: 2px dashed var(--border2);
+  border-radius: 12px;
+  padding: 36px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+.pdf-dropzone:hover, .pdf-dropzone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.pdf-dropzone input[type=file] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+.dz-icon { font-size: 36px; }
+.dz-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.dz-sub { font-size: 12px; color: var(--text3); line-height: 1.5; }
+.dz-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--text2);
+  font-family: var(--mono);
+}
+
+/* PDF Progress */
+.pdf-progress-wrap {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+.pdf-progress-wrap.active { display: flex; }
+.pdf-filename {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pdf-filename .ext { 
+  background: var(--rose-dim);
+  color: var(--rose);
+  border: 1px solid #be123c40;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--mono);
+}
+.pdf-progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.pdf-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0ea5e9, #6366f1);
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.pdf-status { font-size: 11.5px; color: var(--text3); font-family: var(--mono); }
+
+/* PDF Preview extracted text */
+.pdf-text-preview {
+  display: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text3);
+  max-height: 160px;
+  overflow-y: auto;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.pdf-text-preview.active { display: block; }
+.pdf-text-preview b { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ═══ PASTE SCREEN ═══ -->
+<div id="paste-screen">
+  <div class="paste-header">
+    <div class="logo-mark">Sistem Operan Pasien</div>
+    <div class="paste-title">KONRU OBGYN</div>
+    <div class="paste-sub">Upload PDF operan atau paste teks langsung. Sistem otomatis parsing detail pasien, diagnosis, terapi, jaminan, DPJP, dan status KRS.</div>
+  </div>
+
+  <div class="paste-card">
+
+    <!-- Input method tabs -->
+    <div class="input-tabs">
+      <button class="input-tab active" id="tab-pdf" onclick="switchInputTab('pdf')">
+        📄 Upload PDF
+      </button>
+      <button class="input-tab" id="tab-text" onclick="switchInputTab('text')">
+        📋 Paste Teks
+      </button>
+    </div>
+
+    <!-- PDF PANEL -->
+    <div class="input-panel active" id="panel-pdf">
+
+      <div class="pdf-dropzone" id="pdf-dropzone"
+        ondragover="dzDragOver(event)"
+        ondragleave="dzDragLeave(event)"
+        ondrop="dzDrop(event)">
+        <input type="file" accept=".pdf" id="pdf-file-input" onchange="handlePDFFile(this.files[0])">
+        <div class="dz-icon">📑</div>
+        <div class="dz-title">Drop file PDF di sini</div>
+        <div class="dz-sub">atau klik untuk pilih file dari komputer</div>
+        <div class="dz-badge">
+          <span>📂</span> Mendukung: PDF laporan KONRU OBGYN
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="pdf-progress-wrap" id="pdf-progress">
+        <div class="pdf-filename">
+          <span class="ext">PDF</span>
+          <span id="pdf-fname">—</span>
+        </div>
+        <div class="pdf-progress-bar">
+          <div class="pdf-progress-fill" id="pdf-progress-fill"></div>
+        </div>
+        <div class="pdf-status" id="pdf-status">Memproses...</div>
+      </div>
+
+      <!-- Text preview -->
+      <div class="pdf-text-preview" id="pdf-preview"></div>
+
+      <div id="parse-error-pdf" style="display:none;background:var(--rose-dim);border:1px solid #be123c50;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--rose);"></div>
+
+      <button class="btn-primary" id="btn-parse-pdf" style="display:none" onclick="parseFromPDF()">
+        ⚡ Generate Dashboard dari PDF
+      </button>
+
+    </div>
+
+    <!-- TEXT PANEL -->
+    <div class="input-panel" id="panel-text">
+
+      <div class="paste-label">📋 Paste teks dari PDF / WA / Dokumen</div>
+
+      <textarea id="paste-input" placeholder="Paste teks operan di sini...
+
+Contoh format yang didukung:
+1   233182  NOVITA ANGGRAENI  MALANG 18-7-2004  21  DR ARA  3/JKN  3E  09:30
+P1001AB000 DENGAN POST SCTP + IUD HR 3
+A/I GAGAL OD + PROLONGED ...
+KRS (+) ADM (+)
+
+atau format lain dari grup WA / dokumen PDF..."></textarea>
+
+      <div id="parse-error"></div>
+
+      <div class="tags-row">
+        <div class="tag">✅ NO / STIKER / NAMA</div>
+        <div class="tag">✅ DPJP, Jaminan, Kelas</div>
+        <div class="tag">✅ Diagnosis lengkap</div>
+        <div class="tag">✅ Status <b>KRS</b> + <b>ADM</b></div>
+        <div class="tag">✅ Bayi (BY NY...)</div>
+        <div class="tag">✅ VK / Kamar bersalin</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" onclick="parseAndShow()">⚡ Parse & Buka Dashboard</button>
+        <button class="btn-ghost" onclick="useDemo()">🗂️ Demo</button>
+      </div>
+
+    </div>
+
+    <!-- Demo button always visible on PDF tab -->
+    <div id="demo-row-pdf" style="display:flex;justify-content:center">
+      <button class="btn-ghost" style="font-size:12px;padding:8px 16px" onclick="useDemo()">🗂️ Coba dengan Data Demo</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ APP SCREEN ═══ -->
+<div id="app-screen">
+  <div class="topbar">
+    <div class="topbar-row1">
+      <div class="app-logo">
+        <span class="app-logo-badge">KONRU</span>
+        OBGYN Operan
+      </div>
+      <div class="topbar-sep"></div>
+      <div class="topbar-date" id="topbar-date">—</div>
+      <div class="topbar-right">
+        <button class="icon-btn" onclick="resetApp()" title="Input baru">↩</button>
+        <button class="icon-btn" onclick="window.print()" title="Print">🖨</button>
+      </div>
+    </div>
+    <div class="stats-bar" id="stats-bar"></div>
+  </div>
+
+  <div class="app-body">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-inner" id="sidebar-inner"></div>
+      <div class="sidebar-footer">
+        <button class="new-data-btn" onclick="resetApp()">↩ Input Data Baru</button>
+      </div>
+    </div>
+
+    <button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <polyline points="7,2 3,5 7,8"/>
+      </svg>
+    </button>
+
+    <div class="content">
+      <!-- TABS -->
+      <div class="view-tabs" id="view-tabs">
+        <div class="view-tab active" data-view="patients" onclick="switchView('patients', this)">🏥 Semua Pasien <span class="tab-count" id="tab-cnt-patients">0</span></div>
+        <div class="view-tab" data-view="vk" onclick="switchView('vk', this)">🩺 VK / Kaber <span class="tab-count" id="tab-cnt-vk">0</span></div>
+        <div class="view-tab" data-view="krs" onclick="switchView('krs', this)">✅ KRS <span class="tab-count green" id="tab-cnt-krs">0</span></div>
+        <div class="view-tab" data-view="summary" onclick="switchView('summary', this)">📊 Ringkasan</div>
+      </div>
+
+      <!-- PATIENTS VIEW -->
+      <div class="view active" id="view-patients">
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="search-input" placeholder="Cari nama, stiker, diagnosis..." oninput="applyFilter()">
+          </div>
+          <select class="filter-select" id="filter-dpjp" onchange="applyFilter()">
+            <option value="">Semua DPJP</option>
+          </select>
+          <select class="filter-select" id="filter-jaminan" onchange="applyFilter()">
+            <option value="">Semua Jaminan</option>
+          </select>
+          <div class="filter-chip" id="filter-krs" onclick="toggleFilter('krs')" data-active="false">✅ KRS</div>
+          <div class="filter-chip amber" id="filter-baru" onclick="toggleFilter('baru')" data-active="false">🆕 Baru</div>
+          <div class="filter-chip violet" id="filter-baby" onclick="toggleFilter('baby')" data-active="false">👶 Bayi</div>
+        </div>
+        <div class="scroll-area" id="patients-scroll"></div>
+      </div>
+
+      <!-- VK VIEW -->
+      <div class="view" id="view-vk">
+        <div class="scroll-area" id="vk-scroll"></div>
+      </div>
+
+      <!-- KRS VIEW -->
+      <div class="view" id="view-krs">
+        <div class="krs-list" id="krs-list"></div>
+      </div>
+
+      <!-- SUMMARY VIEW -->
+      <div class="view" id="view-summary">
+        <div style="flex:1;overflow-y:auto">
+          <div class="summary-grid" id="summary-grid"></div>
+          <div class="dpjp-table" id="dpjp-table"></div>
+          <div id="notes-area"></div>
+          <div id="stock-area"></div>
+          <div style="height:40px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DEMO DATA (from PDF)
+// ══════════════════════════════════════════
+const DEMO_TEXT = `1
+233182 NOVITA ANGGRAENI MALANG 18-7-2004
+3507265807040002
+21 DR ARA 3/JKN 3E 09:30 P1001AB000 DENGAN POST SCTP + IUD HR 3 ============= A/I GAGAL OD + PROLONGE RAWAT LUKA POSTOFIX
+Bayi Lahir SC 21/02/2026 pukul 22 37 WIB
+KRS (+) ADM (+)
+2
+233194 FITRI FADILATUL UMA MALANG, 01-01-2000
+3507234101000001
+26 DR ARA 2 / JKN 2A 16:30 P1001AB000 DENGAN POST SCTP HR 3 ============ A/I FETAL DISTRESS RAWAT LUKA DENGAN HYPAFIX
+KONTROL MATAHARI HARI RABU DI MATAHARI
+KRS (+) ADM (+)
+233204 BY NY FITRI FADILATUL UMA
+BATU 21-2-2026
+0 HR
+L DR TEH 2/JKN 2A 10:00 NCB SMK
+============
+IMUNISASI HB 0 (-) VAKSIN KOSONG
+KRS (+) ADM (+)
+3
+187645 NINDI OKTAVIANTI BANYUWANGI 06-10-1992
+3517034610920004
+34 DR BMP 3/PBI 3B 10:30 G5 P2001 AB200 UK 14-16 MGG DG ABORTUS IMINNENS
+KRS (+) ADM (+)
+4
+202033 TRAVIS AVRIL AGNESIA MALANG, 11-04-2005
+3507315104050002
+20 DR ARA 3/JKN 3C 09:00 G1 P0000 AB000 UK 12-14 MGG DG HEG + DEHIDRASI SEDANG
+================== PX ALERGI UDANG
+KRS (+) ADM (+)
+5
+233186
+IMAS SEPTIANINGRUM
+SIDOARJO 27-9-1996
+3515136709960001
+30 DR ARA 3/JKN 3D 12:00 P2002AB000 DENGAN POST SCTP+ IMPLAN+ MIOMEKTOMI HR 3 ========================== A/I PROLONGED LATEN PHASE
+PO (+)
+KRS (+) ADM (+)
+233208 BY NY IMAS SEPTIANINGRUM
+BATU, 21-02-2026
+0 HR
+P DR TEH 3/JKN 3D 10:00 NCB SMK
+============
+IMUNISASI HB 0 (-) VAKSIN KOSONG
+KRS (+) ADM (+)
+6
+233212 HAPPY MEILANI MALANG 2-5-1976
+3579014205760001
+50 DR BMP 3/UM 3A 12:00 AUB + ANEMIA
+================
+JAM 09.00 TRANFUSI SELESAI USG (+) ===> MYOMA UTERI PRO CEK DL JAM 11.00 HB:9.9 G/DL ACC KRS
+KRS (+) ADM (+)
+7
+81212 NADIA NAFIS
+BATU, 27-09-2000
+3579016709000001
+26 DR ARA 3/PBPU BPJS NON AKTIF AKHIR BULAN 3F G2P0000AB100 UK 4-6 MGG DG HEG + GEA + DEHIDRASI SEDANG
+KEL: MUNTAH (-), MUAL (-), DIARE (+), FLEK (+) KU BAIK, KES CM
+TD: 102/67 N: 96 RR: 20 S: 36,1 TERPASANG INFUS D5(1) 30 TPM
+KRS (+), ADM (+)
+8
+168016 VINDI FATMALA NINGSIH MALANG 29-6-2002
+3579036906020002
+24 DR ARA 3/PBI 3G G2P0000 AB1 Uk 34-35 MGG DENGAN PPI + GEA
+KEL: TAA
+KU BAIK, KES CM
+TD: 100/54 N: 95 RR: 20 Suhu: 36.5 TERPASANG INF RL KE 1 30 TPM
+TFU 25 CM LETKEP PUKA
+KRS (+), ADM (+)
+8
+233230 RITA NURYANTI KUNINGAN,11-07-1990
+320804510790009
+35 DR ARA PBI 3B 7 G1 P000UK 38-39 MGG DENGAN PE + INPARTU KALA 2
+PARTUS JAM 07.19 P20002 POST PARTUM HR 1 + PE
+KRS (+), ADM (+)
+233241 BY NY RITA NURYANTI BATU,23-2-2026 DR MAYA NCB SMK
+IMUNISASI HB 0 (-) VAKSIN KOSONG
+TERDAPAT BENJOLAN KECIL PADA VULVA OBSERVASI LANJUTAN
+BAYI LAHIR SPONTAN TGL 23-2-26 JAM 07.19 UK ATERM. A-S:7-9. BBL: 2965 GR, PB 50 CM
+KRS (+), ADM (+), SHK (-)
+9
+233242 DWI SETIYANINGRUM MALANG,6-2-1985
+3579034602850005
+41 DR BMP PBPU VK 4 G3P20002 UK 8-10 MGG DENGAN ABORTUS INCOMPLETE
+POST KURETASE HR 1
+KRS (+), ADM (+)
+10
+73798 USWATUN KHASANAH MALANG, 5-2-1980
+3507264502800004
+46 DR ARA DR ASTRI SP.PD 3/PBI 2B AUB + ANEMIA + HIPERTIROID
+TX DR ARA: INF RL 30 TPM INJ ASAM TRANEXAMAT 3X500 MG INJ KETOROLAC 3X30 MG TRANFUSI PRC 2 LABU/HARI
+TX DR ASTRI SP. PD: KANDESARTAN 8 MG THYROZOL 5 MG PRENAMIA 1X1
+POST TRANFUSI PRC 4 LABU HB: 10.7 WBC: 9.10 PLT: 279
+KRS PAGI SETELAH SARAPAN, KONTROL TGL 03-03-2026 JAM 09.30 DI MACOR
+KRS (+) ADM (+)
+11
+231277 ENGGA ROHWANA GALEH MALANG, 29-12-1994
+3507266912940003
+31 DR ARA 3/JKN 3A 21:30 G7P1001 AB5 UK 36-37 MGG DG INPARTU KALA 1 FASE LATEN + BSC 1x + ROJ
+PRO SC + IUD TGL 24/2/2026 JAM 05.00
+AB CEFAZOLIN 2 GR IV
+CEK DL FH HB: 12.3 WBC: 11.92 PLT: 345
+12
+228944 ANGGELIA ANIA TASYA BATU, 22-06-2007
+3579026206070002
+19 DR ARA 3/PBPU 3B 17:00 G1P0000AB0 UK 17-18 MGG DG HEG + DEHIDRASI SEDANG
+CEK DL UL GDA HB: 11.2 WBC: 11.88 PLT: 252 GDA: 96
+TX: INF FUTROLIT + NSB 2 AMP 30 TPM INPEPSA SYR DRAMAMINE
+13
+142215 SALSABILLA NOVIA ANGGRAINI BATU,21-11-2005
+3579026111050002
+21 DR ARA 3/PBPU 3C 12 G2P0010AB0X UK 25-26 MG DG PPI + GEMELLI
+TFU 23 CM LETKEP/LETSU HIS 3X10X20 DJJ: 152/142 X/MENIT
+HB: 9.4 WBC: 14.62 PLT: 291 ALB: 3.20
+TF PRC 2 LABU REAKSI ALERGI (-) PRO USG NIFEDIPINE 3X20 MG
+233295 DIAN RAKHMAWATI BATU, 23-05-1986
+3579016305860002
+39 DR ARA 3/PBI 3F 06:00 G1P0000 AB0X UK 37-38 MINGGU DG OBESITAS + CPD + KPD
+PRO SCTP TGL 24/2/2026 JAM 16.00
+HB: 12.0 WBC: 6.88 PLT: 190 ALBUMIN: 2.90
+194727 MIARSI DWI KARTIKA SARI MALANG, 27-02-1999
+3507326202030001
+26 DR ARA 3/PBI 3G 22:00 G2P1001 AB0 UK 24 MGG DG PPI + PE + BSC 1X + SP BRONKITIS
+TD: 152/99 N: 144 RR: 22 S: 39,3 O2 NASAL 3 LPM
+INJ CEFTRIAXONE 2x1G IV DRIP SANMOL NEBUL COMBIVENT
+229933 NUZULUR ROHMAH MALANG, 18-08-1994
+3507285808940002
+31 DR ARA 3/JKN VK 1 06:00 G2P1001 AB000 UK 39-40 MGG DGN INPARTU KALA 1 FASE AKTIF + BSC 1X
+VT PEMBUKAAN 5 CM EFF 50% KET(+) HIS 3X30" DJJ 142
+CEK DL FH HB: 12.5 WBC: 11.68 PLT: 298
+EVALUASI 6 JAM LAGI
+140457 IRA PERMATA BUNDA BATU, 18-01-2003
+3579025801030002
+23 DR ARA 3/JKN DENDA VK 2 21:30 G1P0000 AB000 UK 42-43 MGG DG POST DATE + INPARTU KALA 1 FASE LATEN
+VT PEMBUKAAN 7 CM EFF 75% KET(+) KEP H1
+AMNIOTOMI (+) WARNA KETUBAN HIJAU KERUH JAM 05.30
+233293 LENI KUMALA DEWI MALANG, 26-03-1994
+3507266603940001
+31 DR BMP 3/PBI VK 3 02:00 G2 P1001 AB0 UK 38-39 MGG + KPD
+HIS 3X30" DJJ 150 VT PEMBUKAAN 5 CM EFF 75%
+206710 GIOVIETA DWI ERLYANSA PUTRI BATU, 18-03-2007
+1607155803070002
+18 DR BMP 3/PBPU VK ISO 02:00 G1P0000 AB000 UK 16-18 MGG DGN ABORTUS INCOMPLETE
+PRO CURETAGE JAM 10.00
+HB: 11.3 WBC: 16.18 PLT: 251
+
+NEUROSANBE KOSONG DEPO
+MICROGEST KOSONG DEPO
+NACL 100 HABIS DEPO
+HB0 HABIS
+POSTOFIX KOSONG GANTI DECAMED
+IMUNISASI HB 0 VAKSIN KOSONG`;
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let APP = { patients: [], krsPatients: [], vkPatients: [], dateStr: '', notes: [], stockAlerts: [], dpjpSummary: {} };
+let FILTER = { search: '', dpjp: '', jaminan: '', krs: false, baru: false, baby: false };
+
+// ══════════════════════════════════════════
+// PARSER
+// ══════════════════════════════════════════
+function parseOBGYN(raw) {
+  const result = { patients: [], krsPatients: [], vkPatients: [], dateStr: '', notes: [], stockAlerts: [], dpjpSummary: {} };
+  const lines = raw.split('\n').map(l => l.trim());
+
+  // Extract date
+  for (const line of lines) {
+    const m = line.match(/\d{1,2}[\s\/\-](Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)[\s\/\-]\d{4}/i);
+    if (m) { result.dateStr = line; break; }
+  }
+
+  // Stock alerts
+  for (const line of lines) {
+    const l = line.toUpperCase();
+    if ((l.includes('KOSONG') || l.includes('HABIS')) && (l.includes('DEPO') || l.includes('VAKSIN') || l.includes('STOK')) && !l.includes('VAKSIN KOSONG')) {
+      result.stockAlerts.push(line);
+    }
+  }
+
+  // Notes (special instructions)
+  for (const line of lines) {
+    const l = line.toLowerCase();
+    if (l.includes('ramadhan') || l.includes('praktek') || l.includes('libur') || (l.includes('perhatian') && l.includes('khusus'))) {
+      result.notes.push(line);
+    }
+  }
+
+  // Parse patients - look for stiker numbers (5-6 digit) as patient start markers
+  const patientBlocks = [];
+  let currentBlock = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Detect patient block start: line with 5-6 digit stiker number + name pattern
+    // or line number then next line with stiker
+    const stikerMatch = line.match(/^(\d{5,6})\s+(BY\s+NY\s+.+|[A-Z][A-Z\s]+(?:MALANG|BATU|SIDOARJO|KUNINGAN|BANYUWANGI|SURABAYA|KEDIRI|BLITAR|PROBOLINGGO|PASURUAN|MOJOKERTO|JOMBANG|NGANJUK|MADIUN|PONOROGO|TULUNGAGUNG|TRENGGALEK|PACITAN|MAGETAN|NGAWI|BOJONEGORO|TUBAN|LAMONGAN|GRESIK|BANGKALAN|SAMPANG|PAMEKASAN|SUMENEP)[,\s])/i);
+    
+    if (stikerMatch) {
+      if (currentBlock) patientBlocks.push(currentBlock);
+      currentBlock = { lines: [line], startLine: i };
+    } else if (currentBlock) {
+      currentBlock.lines.push(line);
+    }
+  }
+  if (currentBlock) patientBlocks.push(currentBlock);
+
+  // Parse each block
+  for (const block of patientBlocks) {
+    const pt = parsePatientBlock(block.lines);
+    if (pt) {
+      result.patients.push(pt);
+      if (pt.isKRS) result.krsPatients.push(pt);
+      if (pt.isVK) result.vkPatients.push(pt);
+    }
+  }
+
+  // Build DPJP summary
+  result.patients.forEach(p => {
+    if (p.dpjp) {
+      result.dpjpSummary[p.dpjp] = (result.dpjpSummary[p.dpjp] || 0) + 1;
+    }
+  });
+
+  return result;
+}
+
+function parsePatientBlock(lines) {
+  if (!lines.length) return null;
+  const fullText = lines.join(' ');
+  const firstLine = lines[0];
+
+  const pt = {
+    id: '',
+    stiker: '',
+    name: '',
+    origin: '',
+    dob: '',
+    nik: '',
+    usia: '',
+    dpjp: '',
+    dpjp2: '',
+    jaminan: '',
+    kelas: '',
+    kamar: '',
+    jamPagi: '',
+    jamMalam: '',
+    obInfo: '',
+    diagnosis: '',
+    txLines: [],
+    labValues: '',
+    isKRS: false,
+    isADM: false,
+    isPO: false,
+    isNew: false,
+    isBaby: false,
+    isVK: false,
+    vkNo: '',
+    alergi: '',
+    notes: '',
+    ttv: '',
+  };
+
+  // Stiker from first line
+  const stikerM = firstLine.match(/^(\d{5,6})\s+(.+)/);
+  if (stikerM) {
+    pt.stiker = stikerM[1];
+    const rest = stikerM[2];
+
+    // Baby detection
+    if (/^BY\s+NY\s+/i.test(rest)) {
+      pt.isBaby = true;
+      pt.name = rest.replace(/\s+/g, ' ').trim();
+    } else {
+      // Extract name + asal
+      const nameCityM = rest.match(/^([A-Z][A-Z\s]+?)\s+(MALANG|BATU|SIDOARJO|KUNINGAN|BANYUWANGI|SURABAYA|KEDIRI|BLITAR|PROBOLINGGO|PASURUAN|MOJOKERTO|JOMBANG|NGANJUK|MADIUN|PONOROGO|TULUNGAGUNG|TRENGGALEK|PACITAN|MAGETAN|NGAWI|BOJONEGORO|TUBAN|LAMONGAN|GRESIK|BANGKALAN|SAMPANG|PAMEKASAN|SUMENEP)/i);
+      if (nameCityM) {
+        pt.name = nameCityM[1].trim();
+        const afterName = rest.slice(nameCityM[0].length);
+        const dobM = afterName.match(/[\d]{1,2}[\-\/][\d]{1,2}[\-\/][\d]{4}/);
+        if (dobM) {
+          pt.dob = dobM[0];
+          pt.origin = nameCityM[2];
+          // Usia calculation
+          const dobParts = pt.dob.split(/[\-\/]/);
+          if (dobParts.length === 3) {
+            const year = parseInt(dobParts[2]) < 100 ? 1900 + parseInt(dobParts[2]) : parseInt(dobParts[2]);
+            pt.usia = (2026 - year) + ' thn';
+          }
+        }
+      } else {
+        pt.name = rest.replace(/,\s*\d.*/, '').trim().split(/\s{2,}/)[0];
+      }
+    }
+  }
+
+  // Scan through all lines
+  for (const line of lines) {
+    const l = line.trim();
+    const lup = l.toUpperCase();
+
+    // NIK (16 digits)
+    const nikM = l.match(/\b(\d{16})\b/);
+    if (nikM && !pt.nik) pt.nik = nikM[1];
+
+    // Age + DPJP + Jaminan + Kelas + Kamar + Jam pattern
+    const metaM = l.match(/^(\d{1,3})\s+(DR\s+[A-Z]+(?:\s+SP\.?\s*[A-Z]+)?(?:\s+DR\s+[A-Z]+(?:\s+SP\.?\s*[A-Z]+)?)?)\s+([\d]{1,2}\s*\/\s*[A-Z\s]+)\s+([A-Z0-9\s]+?)\s+(\d{1,2}[:\.,]\d{2})(?:\s|$)/i);
+    if (metaM && !pt.dpjp) {
+      pt.usia = metaM[1] + ' thn';
+      const dpjpRaw = metaM[2].trim().toUpperCase();
+      // Split multiple DPJPs
+      const drParts = dpjpRaw.split(/\s+DR\s+/i);
+      pt.dpjp = 'DR ' + drParts[0].replace(/^DR\s+/i, '');
+      if (drParts[1]) pt.dpjp2 = 'DR ' + drParts[1];
+      const jamKelasRaw = metaM[3];
+      const jaminanM = jamKelasRaw.match(/(\d+)\s*\/\s*([A-Z\s]+)/i);
+      if (jaminanM) {
+        pt.kelas = jaminanM[1];
+        pt.jaminan = jaminanM[2].trim().toUpperCase();
+      }
+      pt.kamar = metaM[4].trim();
+      pt.jamPagi = metaM[5].replace(',', ':').replace('.', ':');
+    }
+
+    // VK detection
+    if (/VK\s*\d+|VK\s+ISO|KABER/i.test(l)) {
+      pt.isVK = true;
+      const vkM = l.match(/VK\s*(\d+|ISO)/i);
+      if (vkM) pt.vkNo = 'VK ' + vkM[1];
+    }
+
+    // Obstetric info (G...P...AB... UK...)
+    const obM = l.match(/(G\d+\s*P\d+(?:AB\d+)?\s*(?:AB\d+)?\s*(?:UK\s*[\d\-]+\s*MGG)?[\w\s+]*)/i);
+    if (obM && obM[0].length > 5 && !pt.obInfo) {
+      pt.obInfo = obM[0].trim().toUpperCase();
+    }
+
+    // Diagnosis - lines with DG/DENGAN/POST/+
+    if ((lup.includes(' DG ') || lup.includes(' DENGAN ') || lup.includes('POST ') || lup.includes('A/I ')) && l.length > 10) {
+      pt.diagnosis += (pt.diagnosis ? ' | ' : '') + l.replace(/={3,}/g, '').trim();
+    }
+
+    // TTV
+    const ttvM = l.match(/TD\s*:\s*[\d\/]+\s*N\s*:\s*\d+/i);
+    if (ttvM) pt.ttv = l.replace(/={3,}/g, '').trim();
+
+    // Lab values
+    if (/HB\s*[:=]\s*[\d\.]+|WBC\s*[:=]|PLT\s*[:=]|GDA\s*[:=]/i.test(l)) {
+      pt.labValues = l.replace(/={3,}/g, '').trim();
+    }
+
+    // TX lines
+    if (/^(-\s*)?INJ\s|^(-\s*)?INF\s|^(-\s*)?PO\s|^(-\s*)?DRIP\s|^(-\s*)?TX\s+DR|^(-\s*)?PRO\s+/i.test(l) && l.length > 6) {
+      pt.txLines.push(l.trim());
+    }
+
+    // KRS / ADM
+    if (/KRS\s*\(\+\)/i.test(l)) pt.isKRS = true;
+    if (/ADM\s*\(\+\)/i.test(l)) pt.isADM = true;
+    if (/PO\s*\(\+\)/i.test(l)) pt.isPO = true;
+
+    // Alergi
+    if (/ALERGI\s+([A-Z]+)/i.test(l)) {
+      const aM = l.match(/ALERGI\s+([A-Z]+)/i);
+      if (aM) pt.alergi = aM[1];
+    }
+  }
+
+  // If name still empty, try lines[1]
+  if (!pt.name && lines.length > 1) {
+    const l2 = lines[1].trim();
+    if (l2.length < 50 && /^[A-Z]/.test(l2) && !/^\d{16}$/.test(l2)) {
+      pt.name = l2;
+    }
+  }
+
+  // Check if new patient (BARU / PINDAHAN FROM IGD)
+  if (/PINDAHAN\s+IGD|PINDAHAN\s+DARI\s+IGD/i.test(fullText)) pt.isNew = true;
+
+  // Clean diagnosis
+  pt.diagnosis = pt.diagnosis.replace(/={2,}/g, '').replace(/\s+/g, ' ').trim();
+  if (!pt.diagnosis && pt.obInfo) pt.diagnosis = pt.obInfo;
+
+  if (!pt.name && !pt.stiker) return null;
+
+  return pt;
+}
+
+// ══════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════
+function buildApp(data) {
+  APP = data;
+  renderTopbar();
+  renderSidebar();
+  renderPatients(data.patients);
+  renderVK(data.vkPatients);
+  renderKRS(data.krsPatients);
+  renderSummary();
+
+  // Populate filter selects
+  const dpjps = [...new Set(data.patients.map(p => p.dpjp).filter(Boolean))].sort();
+  const dpjpSel = document.getElementById('filter-dpjp');
+  dpjps.forEach(d => { const o = document.createElement('option'); o.value = d; o.text = d; dpjpSel.appendChild(o); });
+
+  const jaminans = [...new Set(data.patients.map(p => p.jaminan).filter(Boolean))].sort();
+  const jaminanSel = document.getElementById('filter-jaminan');
+  jaminans.forEach(j => { const o = document.createElement('option'); o.value = j; o.text = j; jaminanSel.appendChild(o); });
+
+  // Tab counts
+  document.getElementById('tab-cnt-patients').textContent = data.patients.length;
+  document.getElementById('tab-cnt-vk').textContent = data.vkPatients.length;
+  document.getElementById('tab-cnt-krs').textContent = data.krsPatients.length;
+}
+
+function renderTopbar() {
+  const dateEl = document.getElementById('topbar-date');
+  dateEl.textContent = APP.dateStr || new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  const bar = document.getElementById('stats-bar');
+  const total = APP.patients.length;
+  const krs = APP.krsPatients.length;
+  const vk = APP.vkPatients.length;
+  const babies = APP.patients.filter(p => p.isBaby).length;
+  const dpjps = Object.keys(APP.dpjpSummary).length;
+
+  let html = `
+    <div class="stat-chip"><span class="stat-val blue">${total}</span> Total Pasien</div>
+    <div class="stat-chip"><span class="stat-val green">${krs}</span> KRS</div>
+    <div class="stat-chip"><span class="stat-val rose">${vk}</span> VK/Kaber</div>
+    <div class="stat-chip"><span class="stat-val violet">${babies}</span> Bayi</div>
+    <div class="stat-chip"><span class="stat-val amber">${dpjps}</span> DPJP</div>
+  `;
+
+  // DPJP chips
+  Object.entries(APP.dpjpSummary).sort((a,b) => b[1]-a[1]).forEach(([dr,cnt]) => {
+    html += `<div class="dpjp-chip"><span class="dpjp-name">${dr}</span><span class="dpjp-count">${cnt}</span></div>`;
+  });
+
+  bar.innerHTML = html;
+}
+
+function renderSidebar() {
+  const si = document.getElementById('sidebar-inner');
+  // Group by kamar
+  const byKamar = {};
+  APP.patients.forEach(p => {
+    const k = p.kamar || p.vkNo || 'Lainnya';
+    if (!byKamar[k]) byKamar[k] = [];
+    byKamar[k].push(p);
+  });
+
+  let html = '<div class="sb-section-label">Ruangan</div>';
+
+  // VK first
+  const vkRooms = Object.entries(byKamar).filter(([k]) => /^VK|KABER/i.test(k));
+  if (vkRooms.length) {
+    vkRooms.forEach(([k, pts]) => {
+      html += `<div class="sb-item" onclick="scrollToKamar('${k}')">
+        <span class="sb-item-icon">🩺</span>
+        <span class="sb-item-label">${k}</span>
+        <span class="sb-item-count red">${pts.length}</span>
+      </div>`;
+    });
+    html += '<div class="sb-divider"></div>';
+  }
+
+  // Regular rooms
+  const regularRooms = Object.entries(byKamar).filter(([k]) => !/^VK|KABER/i.test(k));
+  regularRooms.sort((a,b) => a[0].localeCompare(b[0])).forEach(([k, pts]) => {
+    const krsCount = pts.filter(p => p.isKRS).length;
+    html += `<div class="sb-item" onclick="scrollToKamar('${k}')">
+      <span class="sb-item-icon">🛏</span>
+      <span class="sb-item-label">${k}</span>
+      <span class="sb-item-count ${krsCount === pts.length ? 'green' : ''}">${pts.length}</span>
+    </div>`;
+  });
+
+  html += '<div class="sb-divider"></div>';
+  html += `<div class="sb-item" onclick="switchView('krs', document.querySelector('[data-view=krs]'))">
+    <span class="sb-item-icon">✅</span>
+    <span class="sb-item-label">Pasien KRS</span>
+    <span class="sb-item-count green">${APP.krsPatients.length}</span>
+  </div>`;
+
+  if (APP.stockAlerts.length) {
+    html += `<div class="sb-divider"></div>
+    <div class="sb-section-label">⚠️ Stok Habis</div>`;
+    APP.stockAlerts.slice(0,5).forEach(s => {
+      html += `<div class="sb-item"><span class="sb-item-icon">📦</span><span class="sb-item-label" style="color:var(--rose);font-size:11px">${s.replace(/KOSONG|HABIS|DEPO/gi,'').trim()}</span></div>`;
+    });
+  }
+
+  si.innerHTML = html;
+}
+
+function renderPatients(patients, targetId='patients-scroll') {
+  const el = document.getElementById(targetId);
+  if (!patients.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div>Tidak ada pasien ditemukan</div>`;
+    return;
+  }
+
+  // Group by kamar
+  const byKamar = {};
+  patients.forEach(p => {
+    const k = p.isVK ? (p.vkNo || 'VK') : (p.kamar || 'Lainnya');
+    if (!byKamar[k]) byKamar[k] = [];
+    byKamar[k].push(p);
+  });
+
+  let html = '';
+  const sortedKamars = Object.entries(byKamar).sort((a,b) => {
+    // VK last in all-patients view (they have their own tab)
+    const aIsVK = /^VK|KABER/i.test(a[0]);
+    const bIsVK = /^VK|KABER/i.test(b[0]);
+    if (aIsVK && !bIsVK) return 1;
+    if (!aIsVK && bIsVK) return -1;
+    return a[0].localeCompare(b[0]);
+  });
+
+  sortedKamars.forEach(([kamar, pts]) => {
+    const anchor = 'kamar-' + slugify(kamar);
+    const icon = /^VK|KABER/i.test(kamar) ? '🩺' : '🛏';
+    html += `<div class="room-block" id="${anchor}">
+      <div class="room-header">
+        <span class="room-icon">${icon}</span>
+        <span class="room-title">${kamar}</span>
+        <span class="room-count-badge">${pts.length} Pasien</span>
+      </div>
+      <div class="cards-grid">`;
+    pts.forEach(p => { html += buildPatientCard(p); });
+    html += `</div></div>`;
+  });
+
+  el.innerHTML = html;
+}
+
+function buildPatientCard(p) {
+  const classes = [
+    'pt-card',
+    p.isKRS ? 'is-krs' : '',
+    p.isNew ? 'is-new' : '',
+    p.isBaby ? 'is-baby' : '',
+    p.isVK ? 'is-vk' : '',
+  ].filter(Boolean).join(' ');
+
+  // Jaminan badge
+  const jam = p.jaminan.toUpperCase();
+  const jamClass = jam.includes('JKN') ? 'jkn' : jam.includes('PBI') ? 'pbi' : jam.includes('UM') ? 'um' : jam.includes('PBPU') ? 'pbpu' : 'pbi';
+
+  // Diagnosis — highlight key terms
+  const diagDisplay = p.diagnosis
+    .replace(/POST\s+SCTP/gi, '<b>POST SCTP</b>')
+    .replace(/POST\s+PARTUM/gi, '<b>POST PARTUM</b>')
+    .replace(/INPARTU/gi, '<b>INPARTU</b>')
+    .replace(/PE\b/g, '<b style="color:var(--rose)">PE</b>')
+    .replace(/KPD\b/g, '<b style="color:var(--amber)">KPD</b>')
+    .replace(/PPI\b/g, '<b style="color:var(--amber)">PPI</b>')
+    .replace(/ABORTUS/gi, '<b style="color:var(--rose)">ABORTUS</b>');
+
+  const hasTx = p.txLines.length > 0;
+  const txId = 'tx-' + p.stiker + Math.random().toString(36).substr(2,4);
+
+  return `<div class="${classes}">
+    <div class="card-head">
+      <div>
+        <div class="card-id">${p.stiker || '—'}</div>
+        ${p.nik ? `<div class="card-name-sub">${p.nik}</div>` : ''}
+      </div>
+      <div style="flex:1">
+        <div class="card-name">${p.isBaby ? '👶 ' : ''}${p.name || '—'}</div>
+        <div class="card-badges">
+          ${p.usia ? `<span class="badge kelas">${p.usia}</span>` : ''}
+          ${p.isKRS ? '<span class="badge krs">✅ KRS</span>' : ''}
+          ${p.isNew ? '<span class="badge baru">🆕 BARU</span>' : ''}
+          ${p.isBaby ? '<span class="badge baby">👶 BAYI</span>' : ''}
+          ${p.isVK ? `<span class="badge vk">🩺 ${p.vkNo || 'VK'}</span>` : ''}
+          ${p.alergi ? `<span class="badge" style="background:#450a0a20;color:#fca5a5;border:1px solid #b91c1c40">⚠️ ALERGI: ${p.alergi}</span>` : ''}
+          ${p.jaminan ? `<span class="badge ${jamClass}">${p.jaminan}${p.kelas ? ' Kl.'+p.kelas : ''}</span>` : ''}
+          ${p.isADM ? '<span class="badge adm">ADM</span>' : ''}
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      ${p.dpjp ? `<div class="card-row">
+        <div class="card-row-label">DPJP</div>
+        <div class="card-row-val" style="color:var(--accent);font-weight:600">${p.dpjp}${p.dpjp2 ? ' · <span style="color:var(--text3)">'+p.dpjp2+'</span>' : ''}</div>
+      </div>` : ''}
+      ${p.kamar ? `<div class="card-row">
+        <div class="card-row-label">Kamar</div>
+        <div class="card-row-val"><b>${p.kamar}${p.vkNo ? ' / '+p.vkNo : ''}</b>${p.origin ? ` — ${p.origin}` : ''}</div>
+      </div>` : ''}
+      ${p.diagnosis ? `<div class="card-row">
+        <div class="card-row-label">DX</div>
+        <div class="diag-text">${diagDisplay}</div>
+      </div>` : ''}
+      ${p.ttv ? `<div class="card-row">
+        <div class="card-row-label">TTV</div>
+        <div class="card-row-val" style="font-size:11px;font-family:var(--mono)">${p.ttv}</div>
+      </div>` : ''}
+      ${p.labValues ? `<div class="card-row">
+        <div class="card-row-label">Lab</div>
+        <div class="card-row-val" style="font-size:11px;font-family:var(--mono);color:var(--cyan)">${p.labValues}</div>
+      </div>` : ''}
+      ${hasTx ? `
+        <button class="expand-toggle" onclick="toggleTX('${txId}')">
+          <span>💊 Terapi (${p.txLines.length})</span>
+          <svg id="${txId}-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,3 5,7 8,3"/></svg>
+        </button>
+        <div id="${txId}" class="tx-block" style="display:none">
+          ${p.txLines.map(t => `<div class="tx-line">${t}</div>`).join('')}
+        </div>` : ''}
+    </div>
+    <div class="card-footer">
+      ${p.dpjp ? `<div class="dpjp-tag"><div class="dpjp-dot"></div>${p.dpjp.replace('DR ', '')}</div>` : ''}
+      ${p.obInfo ? `<span class="ob-tag">${p.obInfo.length > 30 ? p.obInfo.substr(0,30)+'…' : p.obInfo}</span>` : ''}
+      ${p.jamPagi ? `<span class="jam-tag">🌅 ${p.jamPagi}</span>` : ''}
+      ${p.jamMalam ? `<span class="jam-tag">🌙 ${p.jamMalam}</span>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderVK(patients) {
+  const el = document.getElementById('vk-scroll');
+  if (!patients.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🩺</div>Tidak ada pasien di VK</div>';
+    return;
+  }
+  let html = '<div class="cards-grid" style="padding:16px">';
+  patients.forEach(p => { html += buildPatientCard(p); });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function renderKRS(patients) {
+  const el = document.getElementById('krs-list');
+  if (!patients.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div>Belum ada pasien KRS</div>';
+    return;
+  }
+
+  let html = '';
+  patients.forEach((p, i) => {
+    const jam = p.jaminan.toUpperCase();
+    const jamClass = jam.includes('JKN') ? 'jkn' : jam.includes('PBI') ? 'pbi' : jam.includes('UM') ? 'um' : 'pbpu';
+    html += `<div class="krs-row">
+      <div class="krs-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="krs-main">
+        <div class="krs-name">${p.isBaby ? '👶 ' : ''}${p.name}</div>
+        <div class="krs-detail">${p.diagnosis || p.obInfo || '—'}</div>
+        <div class="krs-tags">
+          <span class="badge ${jamClass}">${p.jaminan}${p.kelas ? ' Kl.'+p.kelas : ''}</span>
+          ${p.kamar ? `<span class="badge kelas">${p.kamar}</span>` : ''}
+          ${p.dpjp ? `<span class="badge" style="color:var(--accent)">${p.dpjp}</span>` : ''}
+          ${p.isADM ? '<span class="badge adm">ADM ✓</span>' : ''}
+        </div>
+      </div>
+      <div class="krs-adm">
+        <b>KRS ✓</b>
+        ${p.stiker}
+        ${p.usia ? `<br><span style="font-family:var(--mono)">${p.usia}</span>` : ''}
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderSummary() {
+  const total = APP.patients.length;
+  const krs = APP.krsPatients.length;
+  const vk = APP.vkPatients.length;
+  const babies = APP.patients.filter(p => p.isBaby).length;
+  const adults = total - babies;
+  const withPE = APP.patients.filter(p => /\bPE\b/.test(p.diagnosis || '')).length;
+  const withAnemia = APP.patients.filter(p => /ANEMIA/i.test(p.diagnosis || '')).length;
+  const jkn = APP.patients.filter(p => /JKN/i.test(p.jaminan)).length;
+  const pbi = APP.patients.filter(p => /PBI/i.test(p.jaminan)).length;
+  const pbpu = APP.patients.filter(p => /PBPU/i.test(p.jaminan)).length;
+  const um = APP.patients.filter(p => /UM\b/i.test(p.jaminan)).length;
+
+  document.getElementById('summary-grid').innerHTML = `
+    <div class="sum-card"><div class="sum-label">Total Pasien</div><div class="sum-val blue">${total}</div><div class="sum-sub">Semua pasien rawat</div></div>
+    <div class="sum-card"><div class="sum-label">Pasien Dewasa</div><div class="sum-val blue">${adults}</div><div class="sum-sub">${babies} bayi</div></div>
+    <div class="sum-card"><div class="sum-label">KRS Hari Ini</div><div class="sum-val green">${krs}</div><div class="sum-sub">Pulang hari ini</div></div>
+    <div class="sum-card"><div class="sum-label">VK / Kaber</div><div class="sum-val rose">${vk}</div><div class="sum-sub">Aktif di kamar bersalin</div></div>
+    <div class="sum-card"><div class="sum-label">Bayi</div><div class="sum-val violet">${babies}</div><div class="sum-sub">NCB/bayi baru lahir</div></div>
+    <div class="sum-card"><div class="sum-label">Preeklamsi</div><div class="sum-val amber">${withPE}</div><div class="sum-sub">Pasien dengan PE</div></div>
+    <div class="sum-card"><div class="sum-label">Anemia</div><div class="sum-val amber">${withAnemia}</div><div class="sum-sub">Pasien dengan anemia</div></div>
+    <div class="sum-card"><div class="sum-label">JKN</div><div class="sum-val blue">${jkn}</div><div class="sum-sub">BPJS JKN</div></div>
+    <div class="sum-card"><div class="sum-label">PBI</div><div class="sum-val" style="color:var(--text2)">${pbi}</div><div class="sum-sub">Penerima Bantuan Iuran</div></div>
+    <div class="sum-card"><div class="sum-label">PBPU / Mandiri</div><div class="sum-val" style="color:var(--text2)">${pbpu}</div><div class="sum-sub">Peserta mandiri</div></div>
+    <div class="sum-card"><div class="sum-label">Umum</div><div class="sum-val" style="color:var(--text2)">${um}</div><div class="sum-sub">Biaya pribadi</div></div>
+  `;
+
+  // DPJP table
+  const maxCnt = Math.max(...Object.values(APP.dpjpSummary), 1);
+  let dpjpHtml = '<div class="dpjp-table-header">Distribusi Pasien per DPJP</div>';
+  Object.entries(APP.dpjpSummary).sort((a,b) => b[1]-a[1]).forEach(([dr,cnt]) => {
+    const pct = Math.round((cnt/maxCnt)*100);
+    dpjpHtml += `<div class="dpjp-row">
+      <div class="dpjp-dr">${dr}</div>
+      <div class="dpjp-bar-wrap"><div class="dpjp-bar" style="width:${pct}%"></div></div>
+      <div class="dpjp-cnt">${cnt}</div>
+    </div>`;
+  });
+  document.getElementById('dpjp-table').innerHTML = dpjpHtml;
+
+  // Notes
+  let notesHtml = '';
+  if (APP.notes.length) {
+    notesHtml = `<div class="note-block">
+      <div class="note-block-title">📌 Catatan / Pengumuman</div>
+      ${APP.notes.map(n => `<div>${n}</div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('notes-area').innerHTML = notesHtml;
+
+  // Stock alerts
+  let stockHtml = '';
+  if (APP.stockAlerts.length) {
+    stockHtml = `<div class="stock-alert-block">
+      <div class="stock-alert-title">⚠️ Stok Kosong / Habis</div>
+      ${APP.stockAlerts.map(s => `<div class="stock-item">• ${s}</div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('stock-area').innerHTML = stockHtml;
+}
+
+// ══════════════════════════════════════════
+// FILTERS
+// ══════════════════════════════════════════
+function applyFilter() {
+  FILTER.search = document.getElementById('search-input').value.toLowerCase();
+  FILTER.dpjp = document.getElementById('filter-dpjp').value;
+  FILTER.jaminan = document.getElementById('filter-jaminan').value;
+
+  let filtered = APP.patients.filter(p => {
+    if (FILTER.search) {
+      const hay = [p.name, p.stiker, p.diagnosis, p.obInfo, p.dpjp, p.kamar].join(' ').toLowerCase();
+      if (!hay.includes(FILTER.search)) return false;
+    }
+    if (FILTER.dpjp && p.dpjp !== FILTER.dpjp) return false;
+    if (FILTER.jaminan && p.jaminan !== FILTER.jaminan) return false;
+    if (FILTER.krs && !p.isKRS) return false;
+    if (FILTER.baru && !p.isNew) return false;
+    if (FILTER.baby && !p.isBaby) return false;
+    return true;
+  });
+
+  renderPatients(filtered);
+}
+
+function toggleFilter(key) {
+  FILTER[key] = !FILTER[key];
+  const el = document.getElementById('filter-' + key);
+  el.classList.toggle('active', FILTER[key]);
+  applyFilter();
+}
+
+// ══════════════════════════════════════════
+// INTERACTIONS
+// ══════════════════════════════════════════
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const btn = document.getElementById('sb-toggle');
+  sb.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed');
+  btn.style.left = sb.classList.contains('collapsed') ? '0' : '215px';
+}
+
+function switchView(viewId, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + viewId).classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+function scrollToKamar(kamar) {
+  switchView('patients', document.querySelector('[data-view=patients]'));
+  setTimeout(() => {
+    const el = document.getElementById('kamar-' + slugify(kamar));
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function toggleTX(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  const visible = el.style.display !== 'none';
+  el.style.display = visible ? 'none' : 'block';
+  icon.style.transform = visible ? '' : 'rotate(180deg)';
+}
+
+function slugify(s) {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+}
+
+// ══════════════════════════════════════════
+// ENTRY POINTS
+// ══════════════════════════════════════════
+function parseAndShow() {
+  const raw = document.getElementById('paste-input').value.trim();
+  if (!raw) { showErr('Teks kosong. Paste data operan terlebih dahulu.'); return; }
+
+  const data = parseOBGYN(raw);
+  if (!data.patients.length) {
+    showErr('Tidak ditemukan data pasien. Pastikan teks mengandung nomor stiker 5-6 digit dan nama pasien.');
+    return;
+  }
+
+  document.getElementById('parse-error').style.display = 'none';
+  document.getElementById('paste-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'flex';
+  buildApp(data);
+}
+
+function useDemo() {
+  switchInputTab('text');
+  document.getElementById('paste-input').value = DEMO_TEXT;
+  parseAndShow();
+}
+
+function resetApp() {
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('paste-screen').style.display = 'flex';
+  document.getElementById('paste-input').value = '';
+  FILTER = { search: '', dpjp: '', jaminan: '', krs: false, baru: false, baby: false };
+  // reset PDF state
+  PDF_TEXT = '';
+  document.getElementById('pdf-progress').classList.remove('active');
+  document.getElementById('pdf-preview').classList.remove('active');
+  document.getElementById('btn-parse-pdf').style.display = 'none';
+  document.getElementById('pdf-file-input').value = '';
+  document.getElementById('pdf-progress-fill').style.width = '0%';
+  document.getElementById('pdf-fname').textContent = '—';
+  document.getElementById('pdf-status').textContent = '';
+}
+
+function showErr(msg) {
+  const el = document.getElementById('parse-error');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+}
+
+// ══════════════════════════════════════════
+// INPUT TAB SWITCHER
+// ══════════════════════════════════════════
+function switchInputTab(tab) {
+  document.querySelectorAll('.input-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.input-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  // hide demo button on text tab (it's inside text panel already)
+  document.getElementById('demo-row-pdf').style.display = tab === 'pdf' ? 'flex' : 'none';
+}
+
+// ══════════════════════════════════════════
+// PDF.js INTEGRATION
+// ══════════════════════════════════════════
+
+// Set PDF.js worker — use CDN worker
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let PDF_TEXT = '';
+
+// Drag & drop handlers
+function dzDragOver(e) {
+  e.preventDefault();
+  document.getElementById('pdf-dropzone').classList.add('drag-over');
+}
+function dzDragLeave(e) {
+  document.getElementById('pdf-dropzone').classList.remove('drag-over');
+}
+function dzDrop(e) {
+  e.preventDefault();
+  document.getElementById('pdf-dropzone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') {
+    handlePDFFile(file);
+  } else {
+    showErrPDF('File harus berformat PDF.');
+  }
+}
+
+async function handlePDFFile(file) {
+  if (!file) return;
+  if (file.type !== 'application/pdf') {
+    showErrPDF('File harus berformat PDF (.pdf)');
+    return;
+  }
+
+  // Show progress
+  document.getElementById('pdf-fname').textContent = file.name;
+  document.getElementById('pdf-progress').classList.add('active');
+  document.getElementById('pdf-preview').classList.remove('active');
+  document.getElementById('btn-parse-pdf').style.display = 'none';
+  document.getElementById('parse-error-pdf').style.display = 'none';
+  setProgress(5, 'Membaca file PDF...');
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    setProgress(20, 'Memuat dokumen PDF...');
+
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const numPages = pdf.numPages;
+
+    setProgress(30, `PDF dimuat — ${numPages} halaman. Mengekstrak teks...`);
+
+    let fullText = '';
+    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+
+      // Reconstruct page text preserving line structure
+      // PDF.js gives items with position (x,y); we sort and group by Y
+      const items = textContent.items;
+      
+      // Group items by approximate Y position (same line = within ~3pt)
+      const lineMap = new Map();
+      items.forEach(item => {
+        if (!item.str || !item.str.trim()) return;
+        const y = Math.round(item.transform[5] / 3) * 3; // round to 3pt grid
+        if (!lineMap.has(y)) lineMap.set(y, []);
+        lineMap.get(y).push({ x: item.transform[4], str: item.str });
+      });
+
+      // Sort lines by Y descending (PDF Y origin is bottom-left)
+      const sortedYs = [...lineMap.keys()].sort((a, b) => b - a);
+      const pageLines = sortedYs.map(y => {
+        const lineItems = lineMap.get(y).sort((a, b) => a.x - b.x);
+        return lineItems.map(i => i.str).join(' ').trim();
+      }).filter(l => l.length > 0);
+
+      fullText += pageLines.join('\n') + '\n\n';
+
+      const pct = 30 + Math.round((pageNum / numPages) * 60);
+      setProgress(pct, `Halaman ${pageNum}/${numPages} diproses...`);
+    }
+
+    PDF_TEXT = fullText.trim();
+
+    setProgress(100, `✅ Selesai — ${PDF_TEXT.split('\n').length} baris teks diekstrak`);
+
+    // Show preview (first 800 chars)
+    const preview = document.getElementById('pdf-preview');
+    const previewText = PDF_TEXT.substring(0, 1000) + (PDF_TEXT.length > 1000 ? '\n... (terpotong, teks penuh akan diproses)' : '');
+    preview.textContent = previewText;
+    preview.classList.add('active');
+
+    // Show parse button
+    document.getElementById('btn-parse-pdf').style.display = 'flex';
+
+  } catch (err) {
+    console.error('PDF error:', err);
+    showErrPDF('Gagal membaca PDF: ' + (err.message || 'Unknown error') + '. Coba tab "Paste Teks" dan copy-paste manual.');
+    setProgress(0, '');
+  }
+}
+
+function setProgress(pct, status) {
+  document.getElementById('pdf-progress-fill').style.width = pct + '%';
+  if (status) document.getElementById('pdf-status').textContent = status;
+}
+
+function parseFromPDF() {
+  if (!PDF_TEXT) { showErrPDF('Teks PDF kosong.'); return; }
+
+  const data = parseOBGYN(PDF_TEXT);
+  if (!data.patients.length) {
+    showErrPDF('Tidak ditemukan data pasien dari PDF ini. Kemungkinan PDF adalah hasil scan (gambar) bukan teks — coba Export ke teks atau gunakan tab Paste Teks.');
+    return;
+  }
+
+  document.getElementById('parse-error-pdf').style.display = 'none';
+  document.getElementById('paste-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'flex';
+  buildApp(data);
+}
+
+function showErrPDF(msg) {
+  const el = document.getElementById('parse-error-pdf');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
